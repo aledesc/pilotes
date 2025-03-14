@@ -26,35 +26,35 @@ public class OrderHandler {
 
         Integer clientId = Integer.parseInt(request.pathVariable("clientId"));
 
-        Flux<Order> orders = service.getOrdersByClientId(clientId);
+        Flux<String> orders = service.getOrdersByClientId(clientId);
 
 
         return ServerResponse.ok().body(orders, Order.class);
     }
 
-//    public Mono<ServerResponse> createClientOrder(ServerRequest request) {
-//
-//        Integer clientId = Integer.parseInt(request.pathVariable("clientId"));
-//        Integer productId = Integer.parseInt(request.pathVariable("productId"));
-//        Integer many = Integer.parseInt(request.pathVariable("many"));
-//        Integer addressId = Integer.parseInt(request.pathVariable("addressId"));
-//
-//        Mono<Order> order;
-//        try {
-//            Order o = new Order(clientId, productId, many, addressId);
-//            order = service.save(o);
-//
-//            return ServerResponse.ok().body(order, Order.class);
-//
-//        } catch (InvalidAddressException e) {
-//            return getInvalidAddressServerResponse(e.getMessage());
-//        }
-//    }
+    public Mono<ServerResponse> createClientOrder(ServerRequest request) {
 
-//    private Mono<ServerResponse> getInvalidAddressServerResponse(String exMsg) {
-//        Mono<String> msg = Mono.just(exMsg);
-//        return ServerResponse.status(HttpStatus.NOT_ACCEPTABLE).body(BodyInserters.fromPublisher(msg, String.class));
-//    }
+        Integer clientId = Integer.parseInt(request.pathVariable("clientId"));
+        Integer productId = Integer.parseInt(request.pathVariable("productId"));
+        Integer many = Integer.parseInt(request.pathVariable("many"));
+        Integer addressId = Integer.parseInt(request.pathVariable("addressId"));
+
+        Mono<Order> order;
+        try {
+            OrderDTO o = new OrderDTO(clientId, productId, many, addressId);
+            order = service.saveOrder(o.mapToOrder());
+
+            return ServerResponse.ok().body(order, Order.class);
+
+        } catch (InvalidAddressException e) {
+            return getInvalidAddressServerResponse(e.getMessage());
+        }
+    }
+
+    private Mono<ServerResponse> getInvalidAddressServerResponse(String exMsg) {
+        Mono<String> msg = Mono.just(exMsg);
+        return ServerResponse.status(HttpStatus.NOT_ACCEPTABLE).body(BodyInserters.fromPublisher(msg, String.class));
+    }
 
 //    private Mono<ServerResponse> getNotFoundServerResponse() {
 //        Mono<String> msg = Mono.just("Order not found!");

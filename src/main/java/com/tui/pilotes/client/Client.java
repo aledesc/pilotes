@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
@@ -19,5 +20,10 @@ public class Client {
     private String lastName;
     private String telephone;
 
-    private Address address;
+    private Mono<Address> address;
+
+    public Client(Integer id, Address address) {
+        this.id = id;
+        this.address = Mono.just(address).switchIfEmpty(Mono.empty());
+    }
 }

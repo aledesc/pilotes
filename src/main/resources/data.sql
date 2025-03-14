@@ -7,8 +7,8 @@ INSERT INTO lk_order_status (id,name) VALUES(2,'Finished!');
 INSERT INTO lk_order_status (id,name) VALUES(3,'Served!');
 
 
-INSERT INTO client (id,first_name,last_name,telephone,email) VALUES(1,'Andrew','Johnson','','djohnson@white-spine.com');
-INSERT INTO client (id,first_name,last_name,telephone,email) VALUES(2,'Niels','Argsbaarg','','odinson@thor.also');
+INSERT INTO client (id,first_name,last_name,telephone) VALUES(1,'Andrew','Johnson','');
+INSERT INTO client (id,first_name,last_name,telephone) VALUES(2,'Niels','Argsbaarg','');
 
 
 INSERT INTO address (id,client_id,description,street,number,postal_code,city,country)

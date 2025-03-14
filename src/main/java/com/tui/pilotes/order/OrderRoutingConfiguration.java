@@ -49,9 +49,10 @@ public class OrderRoutingConfiguration {
                         }
                 ))
     })
+
     public RouterFunction<ServerResponse> orderRoutes(OrderHandler handler) {
         return route(GET("/v1/order/client/{clientId}"), handler::getClientOrders)
-//                .andRoute(POST("/v1/order/create/{clientId}/{productId}/{many}/{addressId}"), handler::createClientOrder)
+                .andRoute(POST("/v1/order/{clientId}/{productId}/{many}/{addressId}"), handler::createClientOrder)
         ;
     }
 }
