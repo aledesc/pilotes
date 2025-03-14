@@ -25,12 +25,14 @@ public class OrderRoutingConfiguration {
     @Bean
     @RouterOperations(
     {
-        @RouterOperation(path = "/v1/order/{clientId}", produces = {
+        @RouterOperation(path = "/v1/order/client/{clientId}", produces = {
             MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET, beanClass = OrderHandler.class, beanMethod = "getClientOrders",
             operation = @Operation(operationId = "getClientOrders"
-                    , responses = {
-                    @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = Order.class))),
-                    @ApiResponse(responseCode = "401", description = "Authentication is required to get the requested response.")}
+                    ,responses = {
+                        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = Order.class))),
+                        @ApiResponse(responseCode = "401", description = "Authentication is required to get the requested response."),
+                        @ApiResponse(responseCode = "404", description = "Not found!")
+                    }
                     ,parameters = { @Parameter(in = ParameterIn.PATH, name = "clientId") }
             )),
         @RouterOperation(path = "/v1/order/{clientId}/{productId}/{many}/{addressId}/", produces = {
@@ -48,8 +50,8 @@ public class OrderRoutingConfiguration {
                 ))
     })
     public RouterFunction<ServerResponse> orderRoutes(OrderHandler handler) {
-        return route(GET("/v1/order/{clientId}"), handler::getClientOrders)
-                .andRoute(POST("/v1/order/create/{clientId}/{productId}/{many}/{addressId}"), handler::createClientOrder)
+        return route(GET("/v1/order/client/{clientId}"), handler::getClientOrders)
+//                .andRoute(POST("/v1/order/create/{clientId}/{productId}/{many}/{addressId}"), handler::createClientOrder)
         ;
     }
 }

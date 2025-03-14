@@ -1,6 +1,6 @@
 package com.tui.pilotes.order;
 
-import com.tui.pilotes.client.Address;
+import com.tui.pilotes.address.InvalidAddressException;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,17 +9,14 @@ import org.springframework.data.relational.core.mapping.Column;
 
 import java.time.LocalDateTime;
 
-@Data
+
 @Getter
 @NoArgsConstructor
 public class Order {
-    @Id
-    private String number;
 
-    @Column(value = "date_time")
+    private String number;
     private LocalDateTime dateTime;
 
-    @Column(value = "client_id")
     private Integer clientId;
 
     @Column(value = "product_id")
@@ -31,20 +28,18 @@ public class Order {
     private Double unitaryPrice;
 
     @Column(value = "delivery_address")
-    private Address deliveryAddress;
+    private Integer deliveryAddress;
 
-    private int status;
+    private Integer status;
 
-    public Order(Integer clientId, Integer productId, Integer quantity, Integer deliveryAddress){
+    public Order(Integer clientId, Integer productId, Integer quantity, Integer addressId) throws InvalidAddressException {
         this.clientId = clientId;
         this.productId = productId;
         this.quantity = quantity;
-
-        this.deliveryAddress = new Address();
-        this.deliveryAddress.setId(deliveryAddress);
+        this.deliveryAddress = addressId;
     }
 
-    public Order(Order order){
+    public Order(Order order) throws InvalidAddressException {
         this.number = order.getNumber();
         this.dateTime = order.getDateTime();
         this.clientId = order.getClientId();
@@ -53,6 +48,5 @@ public class Order {
         this.unitaryPrice = order.getUnitaryPrice();
         this.deliveryAddress = order.getDeliveryAddress();
         this.status = order.getStatus();
-
     }
 }

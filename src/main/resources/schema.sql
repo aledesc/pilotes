@@ -5,28 +5,24 @@ CREATE TABLE IF NOT EXISTS client (
     first_name VARCHAR(45) NOT NULL,
     last_name VARCHAR(55) NOT NULL,
     telephone VARCHAR( 9 ),
-    email VARCHAR(255) NOT NULL,
-    password VARCHAR(25),
-
-    PRIMARY KEY( id ),
-    UNIQUE( email )
+    PRIMARY KEY( id )
 );
 
 -- A Client can use several addresses, home, girl's home, mom's home
 --
 CREATE TABLE IF NOT EXISTS address (
 
-    client_id INT,
     id INT,
 
+    client_id INT,
     description VARCHAR ( 255 ),
     street VARCHAR(255) NOT NULL,
     number VARCHAR( 9 ),
-    post_code VARCHAR(5) NOT NULL,
+    postal_code VARCHAR(5) NOT NULL,
     city  VARCHAR(75) NOT NULL,
     country VARCHAR(75),
 
-    PRIMARY KEY( client_id, id )
+    PRIMARY KEY( id )
 );
 
 CREATE TABLE IF NOT EXISTS product (
@@ -43,11 +39,12 @@ CREATE TABLE IF NOT EXISTS lk_order_status (
 );
 
 CREATE TABLE IF NOT EXISTS orders (
-    number INT,
+
+    number INT AUTO_INCREMENT,
     date_time TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP,
 
-    client_id VARCHAR NOT NULL,
-    product_id VARCHAR NOT NULL,
+    client_id INT NOT NULL,
+    product_id INT NOT NULL,
     quantity TINYINT NOT NULL DEFAULT 5,
 
     -- unitary price can change
@@ -58,14 +55,14 @@ CREATE TABLE IF NOT EXISTS orders (
 
     -- A Client can use several addresses: work premisses, home, girl's home, mom's home, etc
     --
-    delivery_address VARCHAR( 255 ) NOT NULL,
+    delivery_address INT NOT NULL,
 
     status INT NOT NULL DEFAULT 0,
 
     PRIMARY KEY( number ),
     FOREIGN KEY( product_id ) REFERENCES product( id ),
     FOREIGN KEY( client_id ) REFERENCES client( id ),
-    FOREIGN KEY( client_id, delivery_address ) REFERENCES address( client_id, id ),
+    FOREIGN KEY( delivery_address ) REFERENCES address( id ),
     FOREIGN KEY( status ) REFERENCES lk_order_status( id ),
 
     CHECK ( quantity IN (5, 10, 15) )

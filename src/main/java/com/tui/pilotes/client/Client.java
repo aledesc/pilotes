@@ -1,5 +1,6 @@
 package com.tui.pilotes.client;
 
+import com.tui.pilotes.address.Address;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,12 +13,11 @@ import java.util.Set;
 @NoArgsConstructor
 public class Client {
     @Id
-    private int id;
+    private Integer id;
 
     private String firstName;
     private String lastName;
     private String telephone;
-    private String email;
 
-    private Set<Address> addresses;
+    private Address address;
 }
