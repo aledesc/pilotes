@@ -18,10 +18,10 @@ public class Order {
 
     private Integer number;
     private LocalDateTime dateTime;
-    private Integer quantity;
     private Integer status;
-
     private Client client;
+
+    private Integer quantity;
     private Product product;
 
     public Order(OrderModel orderModel, Client client) {

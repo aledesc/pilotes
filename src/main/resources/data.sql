@@ -18,4 +18,9 @@ INSERT INTO address (id,client_id,description,street,number,postal_code,city,cou
 INSERT INTO address (id,client_id,description,street,number,postal_code,city,country)
     VALUES(3,2,'Girlfriend','Park Heights','8787-H','65032','Bruzzone','Oz');
 
+-- some orders
+--
 INSERT INTO orders (client_id,product_id,quantity) VALUES (1,1,5);
+INSERT INTO orders (client_id,product_id,quantity) VALUES (1,1,10);
+INSERT INTO orders (client_id,product_id,quantity) VALUES (2,1,15);
+
