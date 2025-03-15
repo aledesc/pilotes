@@ -1,5 +1,6 @@
-
-
+--
+-- 2015-03-14
+--
 CREATE TABLE IF NOT EXISTS client (
     id INT,
     first_name VARCHAR(45) NOT NULL,
@@ -22,13 +23,15 @@ CREATE TABLE IF NOT EXISTS address (
     city  VARCHAR(75) NOT NULL,
     country VARCHAR(75),
 
-    PRIMARY KEY( id )
+    PRIMARY KEY( id ),
+    UNIQUE( client_id ),
+    FOREIGN KEY( client_id ) REFERENCES client( id )
 );
 
 CREATE TABLE IF NOT EXISTS product (
     id INT,
     name VARCHAR ( 255 ),
-    price FLOAT(2) NOT NULL,
+    price FLOAT(2) NOT NULL DEFAULT 1.3,
 
     PRIMARY KEY( id )
 );
@@ -47,22 +50,11 @@ CREATE TABLE IF NOT EXISTS orders (
     product_id INT NOT NULL,
     quantity TINYINT NOT NULL DEFAULT 5,
 
-    -- unitary price can change
-    -- so stored here serves as historical record
-    -- when registering the record, the price is read from product table
-    --
-    unit_price FLOAT(2) NOT NULL,
-
-    -- A Client can use several addresses: work premisses, home, girl's home, mom's home, etc
-    --
-    delivery_address INT NOT NULL,
-
     status INT NOT NULL DEFAULT 0,
 
     PRIMARY KEY( number ),
     FOREIGN KEY( product_id ) REFERENCES product( id ),
     FOREIGN KEY( client_id ) REFERENCES client( id ),
-    FOREIGN KEY( delivery_address ) REFERENCES address( id ),
     FOREIGN KEY( status ) REFERENCES lk_order_status( id ),
 
     CHECK ( quantity IN (5, 10, 15) )

@@ -7,8 +7,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
-public interface OrderRepository extends ReactiveCrudRepository<Order, Integer> {
+public interface OrderRepository extends ReactiveCrudRepository<OrderModel, Integer> {
 
-    @Query("SELECT o.number,o.date_time,o.client_id,o.product_id,o.quantity,o.unit_price,o.delivery_address,o.status FROM orders o WHERE o.client_id=:clientId")
-    Flux<Order> findAllByClientId(Integer clientId);
+    @Query("SELECT o.number,o.date_time,o.client_id,o.product_id,o.quantity,o.status FROM orders o WHERE o.client_id=:clientId")
+    Flux<OrderModel> findAllByClientId(Integer clientId);
 }

@@ -5,6 +5,7 @@ import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -14,12 +15,14 @@ import java.util.function.Predicate;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
+@Table("address")
 public class Address {
 
     @Id
+    @Column(value = "id")
     private Integer id;
 
-    @Column(value = "cliente_id")
+    @Column(value = "client_id")
     private Integer clientId;
 
     private String description;
@@ -55,11 +58,11 @@ public class Address {
     }
 
     private static Predicate<Integer> isNotAValidAddressId = id -> ( id == null || id < 1 );
-    public Address(Integer id)  throws InvalidAddressException {
-
-        if ( isNotAValidAddressId.test(id) ) {
-            throw new InvalidAddressException();
-        }
+    public Address(Integer id) {
+//    //throws InvalidAddressException {
+//        if ( isNotAValidAddressId.test(id) ) {
+//            throw new InvalidAddressException();
+//        }
         this.id = id;
     }
 

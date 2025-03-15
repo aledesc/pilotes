@@ -1,29 +1,27 @@
 package com.tui.pilotes.client;
 
 import com.tui.pilotes.address.Address;
-import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import reactor.core.publisher.Mono;
 
-import java.util.Set;
-
-@Data
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Client {
-    @Id
-    private Integer id;
 
+    private Integer id;
     private String firstName;
     private String lastName;
     private String telephone;
 
-    private Mono<Address> address;
+    private Address address;
 
-    public Client(Integer id, Address address) {
-        this.id = id;
-        this.address = Mono.just(address).switchIfEmpty(Mono.empty());
+    public Client(ClientModel dto, Address address) {
+        this.id = dto.getId();
+        this.firstName = dto.getFirstName();
+        this.lastName = dto.getLastName();
+        this.telephone = dto.getTelephone();
+        this.address = address;
     }
 }

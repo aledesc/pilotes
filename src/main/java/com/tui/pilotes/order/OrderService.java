@@ -4,6 +4,7 @@ import com.tui.pilotes.address.Address;
 import com.tui.pilotes.address.AddressRepository;
 import com.tui.pilotes.client.Client;
 import com.tui.pilotes.client.ClientRepository;
+import com.tui.pilotes.client.ClientService;
 import com.tui.pilotes.product.Product;
 import com.tui.pilotes.product.ProductRepository;
 import lombok.AllArgsConstructor;
@@ -17,38 +18,25 @@ import reactor.core.publisher.Mono;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final ClientRepository clientRepository;
-//    private final AddressRepository addressRepository;
+    private final ClientService clientService;
     private final ProductRepository productRepository;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, ClientRepository clientRepository, ProductRepository productRepository) {
-        //AddressRepository addressRepository
-        //
+    public OrderService(OrderRepository orderRepository, ClientService clientService, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
-        this.clientRepository = clientRepository;
-//        this.addressRepository= addressRepository;
+        this.clientService = clientService;
         this.productRepository= productRepository;
     }
 
-    public Flux<String> getOrdersByClientId(Integer clientId) {
+    public Flux<Order> getOrdersByClientId(Integer clientId) {
         return orderRepository.findAllByClientId(clientId)
-                .flatMap(order ->
-                clientRepository.findById(clientId)
-                        .zipWith(productRepository.findById(order.getProduct().map(Product::getId)))
-                        .map(tuple -> {
-                            Client client = tuple.getT1();
-                            Product product = tuple.getT2();
-                            return "Order ID: " + order.getNumber() + "\n" +
-                                    "Client: " + client.getFirstName() + " " + client.getLastName() + "\n" +
-                                    "Product: " + product.getName() + " " + order.getQuantity() + "  " + product.getPrice() * order.getQuantity() + "€\n" +
-                                    "Total Cost: $" + product.getPrice() * order.getQuantity() + " €\n----------------------------------------------\n" +
-                                    "Deliver to: " + client.getAddress().map(Address::getStreet);
-                        })
-        );
+                .flatMap(order -> Mono
+                        .zip(clientService.get(order.getClientId()),productRepository.findById(order.getProductId()))
+                        .map(tuple -> new Order(order,tuple.getT1(),tuple.getT2()))
+                );
     }
 
-    public Mono<Order> saveOrder(Order order) {
-        return orderRepository.save( order );
-    }
+//    public Mono<Order> saveOrder(OrderModel order) {
+//        return Mono.empty(); //orderRepository.save(order);
+//    }
 }

@@ -1,4 +1,4 @@
-package com.tui.pilotes.order;
+package com.tui.pilotes.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,29 +11,21 @@ import reactor.core.publisher.Mono;
 
 
 @Component
-public class OrderHandler {
+public class ClientHandler {
 
-    private final OrderService service;
+    private final ClientService clientSrv;
 
     @Autowired
-    public OrderHandler(OrderService srv) {
-        this.service = srv;
+    public ClientHandler(ClientService srv) {
+        this.clientSrv = srv;
     }
 
-    public Mono<ServerResponse> getClientOrders(ServerRequest request) {
+    public Mono<ServerResponse> getAll(ServerRequest request) {
 
-        Integer clientId = Integer.parseInt(request.pathVariable("clientId"));
-
-        Flux<Order> orders = service.getOrdersByClientId(clientId);
-        return ServerResponse.ok().body(orders, Order.class);
+        Flux<Client> client = clientSrv.getAll();
+        return ServerResponse.ok().body(client, Client.class);
     }
 
-    public Mono<ServerResponse> create(ServerRequest request) {
-//        Mono<OrderModel> orderDTO = request.bodyToMono(OrderModel.class);
-//        return orderDTO.flatMap(o -> service. saveOrder(o.mapToOrder())
-//                .flatMap(savedUser -> ServerResponse.ok().bodyValue(savedUser)));
-        return getInvalidAddressServerResponse("No no no nooooh!");
-    }
 
     private Mono<ServerResponse> getInvalidAddressServerResponse(String exMsg) {
         Mono<String> msg = Mono.just(exMsg);
