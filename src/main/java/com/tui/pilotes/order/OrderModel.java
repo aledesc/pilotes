@@ -33,20 +33,4 @@ public class OrderModel {
 
     private Integer status;
 
-    public Order mapToOrder() //throws InvalidAddressException {
-    {
-        Order o= new Order();
-        o.setNumber(this.number);
-        o.setDateTime(this.dateTime);
-        o.setQuantity( this.quantity );
-
-        Product product= new Product( this.productId );
-        o.setProduct(product);
-
-//        Address address= new Address( this.deliveryAddress);
-//        Client client= new Client( this.clientId, address );
-//        o.setClient(client);
-
-        return o;
-    }
 }

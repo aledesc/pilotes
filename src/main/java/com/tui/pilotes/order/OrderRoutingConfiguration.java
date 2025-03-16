@@ -30,9 +30,10 @@ public class OrderRoutingConfiguration {
             MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET, beanClass = OrderHandler.class, beanMethod = "getClientOrders",
             operation = @Operation(operationId = "getClientOrders"
                     ,responses = {
-                        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = Order.class))),
-                        @ApiResponse(responseCode = "401", description = "Authentication is required to get the requested response."),
-                        @ApiResponse(responseCode = "404", description = "Not found!")
+                        @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(implementation = Order.class))),
+                        @ApiResponse(responseCode = "204", description = "No conntent: There are not Orders from this Client", content = @Content(schema = @Schema(implementation = NoContent.class))),
+                        @ApiResponse(responseCode = "401", description = "Authentication is required to get the requested response.")
+
                     }
                     ,parameters = { @Parameter(in = ParameterIn.PATH, name = "clientId") }
             )),
@@ -43,12 +44,23 @@ public class OrderRoutingConfiguration {
                         @ApiResponse(responseCode = "201", description = "Order created!", content = @Content(schema = @Schema(implementation = Order.class))),
                         @ApiResponse(responseCode = "401", description = "Authentication is required to get the requested response.")}
                         , requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = OrderModel.class)))
-                ))
-    })
+                )),
 
+        @RouterOperation(path = "/v1/order", produces = {
+                MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.PATCH, beanClass = OrderHandler.class, beanMethod = "update",
+                operation = @Operation(operationId = "update"
+                        , responses = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(implementation = Order.class))),
+                        @ApiResponse(responseCode = "401", description = "Authentication is required to get the requested response.")}
+                        , requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = OrderModel.class)))
+                )),
+
+    })
+    
     public RouterFunction<ServerResponse> orderRoutes(OrderHandler handler) {
         return route(GET("/v1/order/{clientId}"), handler::getClientOrders)
                 .andRoute(POST("/v1/order"), handler::create)
+                .andRoute(PATCH("/v1/order"), handler::update)
         ;
     }
 }

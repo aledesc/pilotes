@@ -2,6 +2,7 @@ package com.tui.pilotes.order;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -23,25 +24,46 @@ public class OrderHandler {
     public Mono<ServerResponse> getClientOrders(ServerRequest request) {
 
         Integer clientId = Integer.parseInt(request.pathVariable("clientId"));
-
         Flux<Order> orders = service.getOrdersByClientId(clientId);
-        return ServerResponse.ok().body(orders, Order.class);
+
+        return orders
+                .collectList()
+                .flatMap(o -> {
+                    if (o.isEmpty()) {
+
+                        Mono<NoContent> noContent= Mono.just(new NoContent(HttpStatus.NO_CONTENT, "There are Orders from this Client"));
+
+                        return ServerResponse.status(HttpStatus.NO_CONTENT).contentType(MediaType.APPLICATION_JSON)
+                                .body(BodyInserters.fromPublisher(noContent,NoContent.class));
+                    } else {
+                        return ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(orders, Order.class);
+                    }
+                });
     }
 
     public Mono<ServerResponse> create(ServerRequest request) {
-//        Mono<OrderModel> orderDTO = request.bodyToMono(OrderModel.class);
-//        return orderDTO.flatMap(o -> service. saveOrder(o.mapToOrder())
-//                .flatMap(savedUser -> ServerResponse.ok().bodyValue(savedUser)));
-        return getInvalidAddressServerResponse("No no no nooooh!");
+
+        Mono<OrderModel> dto= request.bodyToMono(OrderModel.class);
+        return service.saveOrder(dto)
+                .flatMap( o -> {
+                    return ServerResponse.status(HttpStatus.CREATED)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .body(o, Order.class);
+                });
     }
 
-    private Mono<ServerResponse> getInvalidAddressServerResponse(String exMsg) {
-        Mono<String> msg = Mono.just(exMsg);
-        return ServerResponse.status(HttpStatus.NOT_ACCEPTABLE).body(BodyInserters.fromPublisher(msg, String.class));
+    public Mono<ServerResponse> update(ServerRequest request) {
+
+        Mono<OrderModel> dto= request.bodyToMono(OrderModel.class);
+        return service.updateOrder(dto)
+                .flatMap( o -> {
+                    return ServerResponse.ok()
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .body(o, Order.class);
+                        });
     }
 
-//    private Mono<ServerResponse> getNotFoundServerResponse() {
-//        Mono<String> msg = Mono.just("Order not found!");
-//        return ServerResponse.status(HttpStatus.NOT_FOUND).body(BodyInserters.fromPublisher(msg, String.class));
-//    }
+
 }

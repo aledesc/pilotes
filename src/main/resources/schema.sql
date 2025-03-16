@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS address (
 CREATE TABLE IF NOT EXISTS product (
     id INT,
     name VARCHAR ( 255 ),
-    price FLOAT(2) NOT NULL DEFAULT 1.3,
+    price DECIMAL(8,2) NOT NULL DEFAULT 1.30,
 
     PRIMARY KEY( id )
 );

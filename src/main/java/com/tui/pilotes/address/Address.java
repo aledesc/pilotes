@@ -25,7 +25,6 @@ public class Address {
     @Column(value = "client_id")
     private Integer clientId;
 
-    private String description;
     private String street;
     private String number;
 

@@ -24,6 +24,7 @@ public class Order {
     private Integer quantity;
     private Product product;
 
+
     public Order(OrderModel orderModel, Client client) {
         this.number = orderModel.getNumber();
         this.dateTime = orderModel.getDateTime();
@@ -40,7 +41,6 @@ public class Order {
         this.client = client;
         this.product = product;
     }
-
 
     public Double getTotalPrice() {
         if(product==null) {

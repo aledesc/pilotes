@@ -2,12 +2,16 @@ package com.tui.pilotes.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static org.springframework.web.reactive.function.server.ServerResponse.*;
 
 
 @Component
@@ -22,18 +26,27 @@ public class ClientHandler {
 
     public Mono<ServerResponse> getAll(ServerRequest request) {
 
-        Flux<Client> client = clientSrv.getAll();
-        return ServerResponse.ok().body(client, Client.class);
+        Flux<Client> clients= clientSrv.getAll();
+
+        return clients
+                .collectList()
+                .flatMap(c -> {
+                    if (c.isEmpty()) {
+                        return ServerResponse.status(HttpStatus.NO_CONTENT).build();
+                    } else {
+                        return ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(clients, Client.class);
+                    }
+                });
     }
 
+    public Mono<ServerResponse> get(ServerRequest request) {
 
-    private Mono<ServerResponse> getInvalidAddressServerResponse(String exMsg) {
-        Mono<String> msg = Mono.just(exMsg);
-        return ServerResponse.status(HttpStatus.NOT_ACCEPTABLE).body(BodyInserters.fromPublisher(msg, String.class));
+        Integer clientId = Integer.parseInt(request.pathVariable("id"));
+        Mono<Client> client = clientSrv.get(clientId);
+
+        return client.flatMap(c -> ok().contentType(MediaType.APPLICATION_JSON).bodyValue(c))
+                .switchIfEmpty(notFound().build());
     }
-
-//    private Mono<ServerResponse> getNotFoundServerResponse() {
-//        Mono<String> msg = Mono.just("Order not found!");
-//        return ServerResponse.status(HttpStatus.NOT_FOUND).body(BodyInserters.fromPublisher(msg, String.class));
-//    }
 }
