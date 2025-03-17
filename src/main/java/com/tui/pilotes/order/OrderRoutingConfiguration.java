@@ -1,5 +1,6 @@
 package com.tui.pilotes.order;
 
+import com.tui.pilotes.order.search.OrderSearch;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -31,12 +32,12 @@ public class OrderRoutingConfiguration {
             operation = @Operation(operationId = "getClientOrders"
                     ,responses = {
                         @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(implementation = Order.class))),
-                        @ApiResponse(responseCode = "204", description = "No conntent: There are not Orders from this Client", content = @Content(schema = @Schema(implementation = NoContent.class))),
-                        @ApiResponse(responseCode = "401", description = "Authentication is required to get the requested response.")
+                        @ApiResponse(responseCode = "204", description = "No content: There are not Orders from this Client", content = @Content(schema = @Schema(implementation = NoContent.class)))
 
                     }
                     ,parameters = { @Parameter(in = ParameterIn.PATH, name = "clientId") }
             )),
+
         @RouterOperation(path = "/v1/order", produces = {
                 MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.POST, beanClass = OrderHandler.class, beanMethod = "create",
                 operation = @Operation(operationId = "create"
@@ -55,12 +56,26 @@ public class OrderRoutingConfiguration {
                         , requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = OrderModel.class)))
                 )),
 
+        @RouterOperation(path = "/v1/order/{field}/{accuracy}/{text}", produces = {
+                MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET, beanClass = OrderHandler.class, beanMethod = "search",
+                operation = @Operation(operationId = "search"
+                        ,responses = {
+                            @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(implementation = Order.class)))
+                            ,@ApiResponse(responseCode = "204", description = "No content: There are not Orders from this Client", content = @Content(schema = @Schema(implementation = NoContent.class)))
+                            ,@ApiResponse(responseCode = "401", description = "Authentication is required to get the requested response.")}
+                        ,parameters = {
+                            @Parameter(in = ParameterIn.PATH, name = "field"),
+                            @Parameter(in = ParameterIn.PATH, name = "accuracy"),
+                            @Parameter(in = ParameterIn.PATH, name = "text"),
+                        }
+                ))
     })
     
     public RouterFunction<ServerResponse> orderRoutes(OrderHandler handler) {
         return route(GET("/v1/order/{clientId}"), handler::getClientOrders)
                 .andRoute(POST("/v1/order"), handler::create)
                 .andRoute(PATCH("/v1/order"), handler::update)
+                .andRoute(GET("/v1/order/{field}/{accuracy}/{text}"), handler::search)
         ;
     }
 }

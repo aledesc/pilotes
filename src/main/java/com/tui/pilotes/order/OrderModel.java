@@ -32,5 +32,4 @@ public class OrderModel {
     private Integer quantity;
 
     private Integer status;
-
 }

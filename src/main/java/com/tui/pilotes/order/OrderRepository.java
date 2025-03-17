@@ -9,13 +9,12 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface OrderRepository extends ReactiveCrudRepository<OrderModel, Integer> {
 
-    @Query("SELECT o.number,o.date_time,o.client_id,o.product_id,o.quantity,o.status FROM orders o WHERE o.client_id=:clientId")
+    @Query("SELECT number,date_time,client_id,product_id,quantity,status FROM orders o WHERE o.client_id=:clientId")
     Flux<OrderModel> findAllByClientId(Integer clientId);
 
     @Query("INSERT INTO orders (client_id,product_id,quantity) VALUES (:clientId, :productId, :quantity)")
     Mono<OrderModel> saveOrder(Integer clientId, Integer productId, Integer quantity);
 
-    @Query("UPDATE orders SET quantity=:quantity WHERE number=:number")
+    @Query("UPDATE orders SET quantity=:quantity WHERE number=:number AND (DATEDIFF('MINUTE', date_time0, LOCAL_TIME) < 5)")
     Mono<OrderModel> updateOrder(Integer number, Integer quantity);
-
 }

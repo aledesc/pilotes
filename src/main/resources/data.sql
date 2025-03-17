@@ -16,7 +16,7 @@ INSERT INTO address (id,client_id,street,number,postal_code,city,country)
     VALUES(1,1,'St.Julien','DO-045','10099','Bruzzone','Oz');
 
 INSERT INTO address (id,client_id,street,number,postal_code,city,country)
-    VALUES(3,2,'Park Heights','8787-H','65032','Bruzzone','Oz');
+    VALUES(3,2,'Park Heights','8787-H','65032','Broddosti','Oz');
 
 
 -- some orders

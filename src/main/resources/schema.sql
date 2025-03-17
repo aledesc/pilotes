@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS orders (
 
     client_id INT NOT NULL,
     product_id INT NOT NULL,
-    quantity TINYINT NOT NULL DEFAULT 5,
+    quantity INT NOT NULL DEFAULT 5,
 
     status INT NOT NULL DEFAULT 0,
 
