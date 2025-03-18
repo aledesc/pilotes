@@ -1,5 +1,6 @@
 --
 -- 2015-03-14
+-- fixture
 --
 INSERT INTO product (id,name,price) VALUES(1,'Pilote: meatball stew',1.33);
 

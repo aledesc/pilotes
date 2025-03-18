@@ -48,8 +48,8 @@ dependencies {
 
 ///************************************************************************************************
 //    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
-//    testImplementation 'org.springframework.security:spring-security-test'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
 
 // data
     implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc:3.4.2'

@@ -63,7 +63,8 @@ public class OrderService {
                 .flatMap(order -> Mono
                         .zip(clientService.get(order.getClientId()),productRepository.findById(order.getProductId()))
                         .map(tuple -> new Order(order,tuple.getT1(),tuple.getT2()))
-                );
+                )
+                .switchIfEmpty( Flux.empty() );
 
         } else {
 
@@ -75,7 +76,8 @@ public class OrderService {
                 .flatMap(order -> Mono
                         .zip(clientService.get(order.getClientId()),productRepository.findById(order.getProductId()))
                         .map(tuple -> new Order(order,tuple.getT1(),tuple.getT2()))
-                );
+                )
+                .switchIfEmpty( Flux.empty() );
         }
 
     }

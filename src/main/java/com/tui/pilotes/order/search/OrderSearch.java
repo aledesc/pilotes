@@ -53,7 +53,6 @@ public class OrderSearch {
         final String EQUALS_CLOSE = "'";
         final String LIKE = " LIKE '%";
         final String LIKE_CLOSE= "%'";
-        final String SPACE= " ";
 
         StringBuilder whereClause = new StringBuilder(field.getTablePrefix() + field.getFieldName());
 
@@ -67,6 +66,7 @@ public class OrderSearch {
             whereClause.append(LIKE).append(text).append(LIKE_CLOSE);
         }
 
+        final String SPACE= " ";
         final String REGEX_SPACES= "\\s{2,}";
         return whereClause.toString().replaceAll(REGEX_SPACES, SPACE).trim();
     }

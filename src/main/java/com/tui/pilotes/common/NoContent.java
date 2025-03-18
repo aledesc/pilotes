@@ -1,4 +1,4 @@
-package com.tui.pilotes.order;
+package com.tui.pilotes.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

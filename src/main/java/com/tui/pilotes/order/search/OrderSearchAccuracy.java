@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum OrderSearchAccuracy {
 
-    NON_EXACT("non_exact"),
+    NON_EXACT("non-exact"),
     EXACT("exact");
 
     private final String accuracy;

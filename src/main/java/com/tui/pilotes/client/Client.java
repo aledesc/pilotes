@@ -17,6 +17,10 @@ public class Client {
 
     private Address address;
 
+    public Client(Integer id) {
+        this.id = id;
+    }
+
     public Client(ClientModel dto, Address address) {
         this.id = dto.getId();
         this.firstName = dto.getFirstName();

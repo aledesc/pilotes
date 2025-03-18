@@ -1,7 +1,11 @@
 package com.tui.pilotes.order;
 
+import com.tui.pilotes.common.Common;
+import com.tui.pilotes.common.NoContent;
 import com.tui.pilotes.order.search.OrderSearchAccuracy;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +20,9 @@ import reactor.core.publisher.Mono;
 @Component
 public class OrderHandler {
 
+    // Create a logger instance
+    private static final Logger logger = LoggerFactory.getLogger(OrderHandler.class);
+
     private final OrderService service;
 
     @Autowired
@@ -23,29 +30,10 @@ public class OrderHandler {
         this.service = srv;
     }
 
-    public Mono<ServerResponse> getClientOrders(ServerRequest request) {
-
-        Integer clientId = Integer.parseInt(request.pathVariable("clientId"));
-        Flux<Order> orders = service.getOrdersByClientId(clientId);
-
-        return orders
-            .collectList()
-            .flatMap(o -> {
-                if (o.isEmpty()) {
-
-                    Mono<NoContent> noContent= Mono.just(new NoContent(HttpStatus.NO_CONTENT, "There are Orders from this Client"));
-
-                    return ServerResponse.status(HttpStatus.NO_CONTENT).contentType(MediaType.APPLICATION_JSON)
-                            .body(BodyInserters.fromPublisher(noContent,NoContent.class));
-                } else {
-                    return ServerResponse.ok()
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .body(orders, Order.class);
-                }
-            });
-    }
 
     public Mono<ServerResponse> create(ServerRequest request) {
+
+        logger.info("Creating new order");
 
         Mono<OrderModel> dto= request.bodyToMono(OrderModel.class);
         return service.saveOrder(dto)
@@ -58,6 +46,8 @@ public class OrderHandler {
 
     public Mono<ServerResponse> update(ServerRequest request) {
 
+        logger.info("Updating order");
+
         Mono<OrderModel> dto= request.bodyToMono(OrderModel.class);
         return service.updateOrder(dto)
                 .flatMap( o -> {
@@ -67,30 +57,32 @@ public class OrderHandler {
                         });
     }
 
+    public Mono<ServerResponse> getClientOrders(ServerRequest request) {
+
+        Integer clientId = Integer.parseInt(request.pathVariable("clientId"));
+        Flux<Order> orders = service.getOrdersByClientId(clientId);
+
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(orders, Order.class);
+    }
+
     public Mono<ServerResponse> search(ServerRequest request) {
 
         String field = request.pathVariable("field");
         String accuracy= request.pathVariable("accuracy");
         String text = request.pathVariable("text");
 
-        Flux<Order> orders = service.search(field, validateAccuracy(accuracy), text);
+        logger.info("Searching field: " + field + ", with accuracy: " + accuracy + " for: "+ text);
 
-        return orders
-            .collectList()
-            .flatMap(o -> {
-                if (o.isEmpty()) {
+        Flux<Order> orders = service.search(validateField(field), validateAccuracy(accuracy), text);
 
-                    Mono<NoContent> noContent = Mono.just(new NoContent(HttpStatus.NO_CONTENT, "There are Orders from this Client"));
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(orders, Order.class);
 
-                    return ServerResponse.status(HttpStatus.NO_CONTENT).contentType(MediaType.APPLICATION_JSON)
-                            .body(BodyInserters.fromPublisher(noContent, NoContent.class));
-                } else {
-                    return ServerResponse.ok()
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .body(orders, Order.class);
-                }
-            });
     }
+
 
     private String validateField(String field) {
         return StringUtils.isEmpty(field) ? "first_name":  field;

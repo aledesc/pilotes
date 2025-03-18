@@ -40,7 +40,7 @@ public class OrderSearchTest {
         assertEquals("rew", search.getText() );
 
 
-        accuracy= "non_exact";
+        accuracy= "non-exact";
         search= new OrderSearch(field, accuracy, text);
         assertEquals(OrderSearchAccuracy.NON_EXACT, search.getAccuracy() );
 

@@ -19,7 +19,6 @@ import java.util.function.Predicate;
 public class Address {
 
     @Id
-    @Column(value = "id")
     private Integer id;
 
     @Column(value = "client_id")
@@ -57,11 +56,10 @@ public class Address {
     }
 
     private static Predicate<Integer> isNotAValidAddressId = id -> ( id == null || id < 1 );
-    public Address(Integer id) {
-//    //throws InvalidAddressException {
-//        if ( isNotAValidAddressId.test(id) ) {
-//            throw new InvalidAddressException();
-//        }
+    public Address(Integer id) throws InvalidAddressException {
+        if ( isNotAValidAddressId.test(id) ) {
+            throw new InvalidAddressException();
+        }
         this.id = id;
     }
 

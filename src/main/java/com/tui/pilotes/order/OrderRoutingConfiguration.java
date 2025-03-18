@@ -1,6 +1,6 @@
 package com.tui.pilotes.order;
 
-import com.tui.pilotes.order.search.OrderSearch;
+import com.tui.pilotes.common.NoContent;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -56,7 +56,7 @@ public class OrderRoutingConfiguration {
                         , requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = OrderModel.class)))
                 )),
 
-        @RouterOperation(path = "/v1/order/{field}/{accuracy}/{text}", produces = {
+        @RouterOperation(path = "/v1/search/{field}/{accuracy}/{text}", produces = {
                 MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET, beanClass = OrderHandler.class, beanMethod = "search",
                 operation = @Operation(operationId = "search"
                         ,responses = {
@@ -72,10 +72,10 @@ public class OrderRoutingConfiguration {
     })
     
     public RouterFunction<ServerResponse> orderRoutes(OrderHandler handler) {
-        return route(GET("/v1/order/{clientId}"), handler::getClientOrders)
-                .andRoute(POST("/v1/order"), handler::create)
+        return route(POST("/v1/order"), handler::create)
                 .andRoute(PATCH("/v1/order"), handler::update)
-                .andRoute(GET("/v1/order/{field}/{accuracy}/{text}"), handler::search)
+                .andRoute(GET("/v1/order/{clientId}"), handler::getClientOrders)
+                .andRoute(GET("/v1/search/{field}/{accuracy}/{text}"), handler::search)
         ;
     }
 }
