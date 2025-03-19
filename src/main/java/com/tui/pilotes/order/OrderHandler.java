@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -67,6 +68,7 @@ public class OrderHandler {
                 .body(orders, Order.class);
     }
 
+    @PreAuthorize("hasRole('USER')")
     public Mono<ServerResponse> search(ServerRequest request) {
 
         String field = request.pathVariable("field");

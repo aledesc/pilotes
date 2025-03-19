@@ -2,54 +2,57 @@ En la base de datos de comercio electrónico de la compañía disponemos de la t
  
 # PILOTES
 
-**Data model:**
+**Data model & database** 
 
-The data model provided has three Entities, Address, Client and Order. 
+The data model provided has three entities, Address, Client and Order. 
 
-To implement the solution of the test we are using in memory H2. In the /main/resources dir there are a couple of sql
-script files, schema.sql and data.sql. Both are launching at application bootstrapping as is indicated in the 
+We are are going to use an in memory H2 database. In the /main/resources directory there are a couple of sql
+script files, _schema.sql_ and _data.sql_. Both are ran at application bootstrapping as is indicated in the 
 application properties file.
 
-Our data model includes a four Entity, Product, nobody knows how will the great Mr. Montoro feel in a couple of months 
-about including his tasteful recipe of SourSweet Chicken, so better be ready. Besides this inclusion allows for a more
-intuitive and coherent data model, having the product features like the price in his own entity. Product has 1 - many 
-relationship with the Order entity.
+Our data model includes a table for all those aforementioned entities plus a four for the Product entity, nobody 
+knows how will the great Mr. Montoro feel in a couple of months about including his tasteful recipe of _*SourSweet 
+Pulled Pork*_, so better be ready. Aside from that, this inclusion allows for a more intuitive and coherent data model,
+having the product features like the price in his own entity. Product has 1 - many relationship with the Order entity.
 
-There is also a table for Client, it has 1 - many relationship with the Order entity.
+The table for Client has 1 - many relationship with the Order entity.
 
-There is also a table for Address, it has many - 1 relationship with the Client entity, given a Client can get hungry 
-in his mom's house, in his girlfriend's house or in his own's.
+The table for Address has many - 1 relationship with the Client entity, given a Client can get hungry 
+in his mom's house, in his girlfriend's house or in his own's, and may wish to be served at different places. One has 
+his mood !
+
+At middleware level there are the ProductRepository, the OrderRepository and the OrderRepositoryImpl. The two first are 
+standard interfaces with defined user queries, the RepositoryImpl is used for the search, given it requires a more 
+complex and specific logic and data treatment.  
+
+**A P I**
+
+The solution is implemented using Spring Webflux with functional endpoints. To document the API, the routing 
+configuration method has all needed annotations. The swagger interface show the created endpoints that  can be accessed
+and tested at http://localhost:8080/swagger-ui/swagger-ui/index.html
+
+Instead of grouping the functionalities around a technical categories, e.g. controller, model, service et. al, domain
+entities drive the structuring, so below _**com.tui.pilotes**_ there are the folders for Address, Client, Product and Order 
+entities, also the SpringBoot's  main class and the SpringSecurity configuration class.   
+
+**Testing**
+
+There are some test in place:
+
+- main entities are construed only if there are valid data provided, if not, sensible defaults are in place, that is tested
+- the code responsible for creating the search conditions is tested the most, to gran the search condition is properly generated
+- as there is a secured endpoint, it is tested the authorization mechanism works well
+
+Some end point accesses :
+- curl http://localhost:8080/v1/search/first_name/non-exact/dre -H "Accept: application/json" -H "Authorization: Basic dXNlcjpwYXNzd29yZA=="
+- curl http://localhost:8080/v1/search/city/exact/Bruzzone -H "Accept: application/json" -H "Authorization: Basic dXNlcjpwYXNzd29yZA=="
+- curl http://localhost:8080/v1/search/street/non-exact/mar -H "Accept: application/json"
+- curl http://localhost:8080/v1/order/1 -H "Accept: application/json"
+
+**Missings**
+
+- validators for validation at handler level
+- a more thorough and comprehensive unit / integration  testing 
+- exceptionals condition representation and  treatment
 
 
- 
-* **BRAND_ID:** foreign key de la cadena del grupo (1 = ZARA).
-* **START_DATE , END_DATE:** rango de fechas en el que aplica el precio tarifa indicado.
-* **PRICE_LIST:** Identificador de la tarifa de precios aplicable.
-* **PRODUCT_ID:** Identificador código de producto.
-* **PRIORITY:** Desambiguador de aplicación de precios. Si dos tarifas coinciden en un rago de fechas se aplica la de mayor prioridad (mayor valor numérico).
-* **PRICE:** precio final de venta.
-* **CURR:** ISO de la moneda.
- 
-**Se pide:**
- 
-Construir una aplicación/servicio en SpringBoot que provea una end point rest de consulta  tal que:
- 
-- Acepte como parámetros de entrada: fecha de aplicación, identificador de producto, identificador de cadena.
-- Devuelva como datos de salida: identificador de producto, identificador de cadena, tarifa a aplicar, fechas de aplicación y precio final a aplicar.
- 
-Se debe utilizar una base de datos en memoria (tipo h2) e inicializar con los datos del ejemplo, (se pueden cambiar el nombre de los campos y añadir otros nuevos si se quiere, elegir el tipo de dato que se considere adecuado para los mismos).
-              
-Desarrollar unos test al endpoint rest que  validen las siguientes peticiones al servicio con los datos del ejemplo:
-                                                                                       
-- Test 1: petición a las 10:00 del día 14 del producto 35455   para la brand 1 (ZARA)
-- Test 2: petición a las 16:00 del día 14 del producto 35455   para la brand 1 (ZARA)
-- Test 3: petición a las 21:00 del día 14 del producto 35455   para la brand 1 (ZARA)
-- Test 4: petición a las 10:00 del día 15 del producto 35455   para la brand 1 (ZARA)
-- Test 5: petición a las 21:00 del día 16 del producto 35455   para la brand 1 (ZARA)
- 
- 
-**Se valorará:**
- 
-* Diseño y construcción del servicio.
-* Calidad de Código.
-* Resultados correctos en los test.

@@ -8,10 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
@@ -52,8 +50,8 @@ public class OrderHandlerSecuredTests {
     }
 
 
+    // Test unauthorized access
     @Test
-    @WithMockUser(roles = "ADMIN")
     public void testSecuredSearchGets401StatusCode() {
 
         Mockito.when(orderService.search("field","accuracy","text")).thenReturn(Flux.just(order1, order2));
@@ -61,9 +59,11 @@ public class OrderHandlerSecuredTests {
         webTestClient.get().uri("/v1/search/field/accuracy/text")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
-                .expectStatus().isNotFound();
+                .expectStatus().isUnauthorized();
     }
 
+
+    // Test authorized access, NOT FOUND result code has meaning beyond the authorization barrier
     @Test
     @WithMockUser(roles = "USER")
     public void testSecuredSearchGetsNotFOund() {
